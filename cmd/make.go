@@ -25,7 +25,7 @@ import (
 	"strings"
 )
 
-var name, address0, address1, csv_path, path, code string
+var name, address0, address1, csv_path, path, code, font string
 
 // makeCmd represents the make command
 var makeCmd = &cobra.Command{
@@ -72,6 +72,7 @@ func init() {
 	makeCmd.PersistentFlags().StringVar(&address1, "address1", "", "宛先の住所の後半")
 	makeCmd.PersistentFlags().StringVar(&code, "code", "", "宛先の郵便番号")
 	makeCmd.PersistentFlags().StringVar(&csv_path, "csv", "", "宛先のリストのcsvファイルのパス")
+	makeCmd.PersistentFlags().StringVar(&font, "font", "", "宛先のフォントのpath")
 	makeCmd.PersistentFlags().StringVar(&path, "output", "", "出力するpdfファイルのパス")
 }
 
@@ -124,13 +125,13 @@ func moji(s string) []string {
 func make_fromName(name, address0, address1, code, path string) {
 
 	name_size := 32
-	address_size := 12
+	address_size := 14
 
 	pdf := gopdf.GoPdf{}
 	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: 283.5, H: 419.5}})
 	pdf.AddPage()
 
-	_ = pdf.AddTTFFont("test", "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf")
+	_ = pdf.AddTTFFont("test", font)
 	//	if err != nil {
 	//		return err
 	//	}
@@ -156,7 +157,7 @@ func make_fromName(name, address0, address1, code, path string) {
 
 	pdf.SetFont("test", "", 12)
 	pdf.SetY(34.0157)
-	x := []float64{44.3, 51.3, 58.3, 65.9, 72.7, 79.5, 86.3}
+	x := []float64{44.3, 51.5, 58.7, 66.5, 73.5, 80.5, 87.5}
 
 	for i := 0; i < 7; i++ {
 		pdf.SetX(mm2pt(x[i]))
@@ -189,16 +190,16 @@ func make_fromName(name, address0, address1, code, path string) {
 		pdf.SetX(mm2pt(90))
 		pdf.SetY(y)
 		pdf.Cell(nil, address0_list[i])
-		y += 14
+		y += float64(address_size + 2)
 	}
 
-	y = mm2pt(46)
+	y = mm2pt(40)
 	address1_list := moji(address1)
 	for i := 0; i < len(address1_list); i++ {
-		pdf.SetX(mm2pt(90) - 14)
+		pdf.SetX(mm2pt(90) - float64(address_size+4))
 		pdf.SetY(y)
 		pdf.Cell(nil, address1_list[i])
-		y += 14
+		y += float64(address_size + 2)
 	}
 
 	pdf.WritePdf(path)
