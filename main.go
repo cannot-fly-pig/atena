@@ -18,5 +18,5 @@ package main
 import "github.com/cannot-fly-pig/atena/cmd"
 
 func main() {
-  cmd.Execute()
+	cmd.Execute()
 }
