@@ -22,6 +22,8 @@ import (
 	"os"
 )
 
+var make_csvpath string
+
 // makeCsvCmd represents the makeCsv command
 var makeCsvCmd = &cobra.Command{
 	Use:   "make-csv [string to file name]",
@@ -33,22 +35,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 
-	Args: cobra.MinimumNArgs(1),
-
 	Run: func(cmd *cobra.Command, args []string) {
-		path := args[0]
-		if path[len(path)-4:] != ".csv" {
-			path += ".csv"
+		if len(make_csvpath) < 5 || make_csvpath[len(make_csvpath)-4:] != ".csv" {
+			make_csvpath += ".csv"
 		}
 
-		if Exists(args[0]) {
-			fmt.Println(args[0] + " is already exist")
+		if Exists(make_csvpath) {
+			fmt.Println(make_csvpath + " is already exist")
 		} else {
-			file, _ := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+			file, _ := os.OpenFile(make_csvpath, os.O_WRONLY|os.O_CREATE, 0666)
 			defer file.Close()
 
 			writer := csv.NewWriter(file)
-			writer.Write([]string{"住所", "郵便番号(任意)", "名前"})
+			writer.Write([]string{"住所1", "住所2", "名前"})
 			writer.Flush()
 		}
 	},
@@ -66,6 +65,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// makeCsvCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	makeCsvCmd.PersistentFlags().StringVar(&make_csvpath, "output", "./address-list.csv", "出力するcsvファイルのパス")
 }
 
 func Exists(filename string) bool {

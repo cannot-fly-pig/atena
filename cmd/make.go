@@ -16,12 +16,15 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/signintech/gopdf"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -40,16 +43,16 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case name == "" && address0 == "" && csv_path == "":
-			fmt.Println("require path to csv_path or name and address")
+			cmd.Help()
 
 		case (name == "" || address0 == "") && csv_path == "":
-			fmt.Println("require path to csv_path or name and address")
+			cmd.Help()
 
 		case (name != "" && address0 != "") && csv_path == "":
 			make_fromName(name, address0, address1, code, path)
 
-			//case (name == "" && address == "") && csv_path != "":
-			//	make_fromcsv_path(csv_path, path)
+		case (name == "" && address0 == "") && csv_path != "":
+			make_fromcsv(csv_path, path)
 
 		}
 	},
@@ -157,7 +160,7 @@ func make_fromName(name, address0, address1, code, path string) {
 
 	pdf.SetFont("test", "", 12)
 	pdf.SetY(34.0157)
-	x := []float64{44.3, 51.5, 58.7, 66.5, 73.5, 80.5, 87.5}
+	x := []float64{44.6, 52.3, 60.0, 68.3, 75.8, 83.3, 90.8}
 
 	for i := 0; i < 7; i++ {
 		pdf.SetX(mm2pt(x[i]))
@@ -175,6 +178,12 @@ func make_fromName(name, address0, address1, code, path string) {
 		pdf.Cell(nil, name_list[i])
 		y += 36
 	}
+
+	pdf.SetX(141.75 - float64(name_size/2))
+	pdf.SetY(y)
+	pdf.Cell(nil, " ")
+
+	y += 36
 
 	pdf.SetX(141.75 - float64(name_size/2))
 	pdf.SetY(y)
@@ -204,4 +213,30 @@ func make_fromName(name, address0, address1, code, path string) {
 
 	pdf.WritePdf(path)
 	//	return nil
+}
+
+func make_fromcsv(csv_path, path string) {
+	file, err := os.Open(csv_path)
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	var line []string
+
+	if path[len(path)-4:] == ".pdf" {
+		path = path[:len(path)-4]
+	}
+
+	n := 0
+	for {
+		line, err = reader.Read()
+		if err != nil {
+			break
+		}
+		if n != 0 {
+			fmt.Println(string(path) + strconv.Itoa(n) + ".pdf")
+			make_fromName(line[2], line[0], line[1], "", string(path)+strconv.Itoa(n)+".pdf")
+			fmt.Println(string(path) + strconv.Itoa(n) + ".pdf")
+		}
+		n++
+	}
 }
