@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
+	"github.com/cheggaaa/pb/v3"
 	"github.com/signintech/gopdf"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -153,7 +153,6 @@ func make_fromName(name, address0, address1, code, path string) {
 		txt := string(body)
 		index := strings.Index(txt, "zipcode")
 		code = txt[index+10 : index+17]
-		fmt.Println(code)
 	}
 
 	//郵便番号印刷
@@ -220,23 +219,25 @@ func make_fromcsv(csv_path, path string) {
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	var line []string
 
 	if path[len(path)-4:] == ".pdf" {
 		path = path[:len(path)-4]
 	}
 
+	lines, err := reader.ReadAll()
+
+	bar := pb.StartNew(len(lines) - 1)
+
 	n := 0
-	for {
-		line, err = reader.Read()
+	for _, line := range lines {
 		if err != nil {
 			break
 		}
 		if n != 0 {
-			fmt.Println(string(path) + strconv.Itoa(n) + ".pdf")
 			make_fromName(line[2], line[0], line[1], "", string(path)+strconv.Itoa(n)+".pdf")
-			fmt.Println(string(path) + strconv.Itoa(n) + ".pdf")
+			bar.Increment()
 		}
 		n++
 	}
+	bar.Finish()
 }
