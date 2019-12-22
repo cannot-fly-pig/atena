@@ -2,6 +2,5 @@
 
 ## Changelog
 
-4d6ad0d first commit
-2eb0194 first commit
+8e99d70 全角英数字に対応 連名
 
