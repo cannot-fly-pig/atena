@@ -1,0 +1,3 @@
+bcc415821a0cede9af6a39d65e2ebabc1c68a01352d86b9e81d330bb9c49c21e  atena_1.0.1_linux_amd64.tar.gz
+9657f3159d17cae6e2d1021973bc8755b2d8ce5eb1ac4a4e488fa53fe242c5dc  atena_1.0.1_windows_amd64.tar.gz
+d80ea2c006a166599519668e67b69ec585662747bf4b7c590753d394996089b5  atena_1.0.1_darwin_amd64.tar.gz

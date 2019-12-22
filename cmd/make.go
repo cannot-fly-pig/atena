@@ -18,6 +18,7 @@ package cmd
 import (
 	"encoding/csv"
 	"github.com/cheggaaa/pb/v3"
+	m "github.com/ktnyt/go-moji"
 	"github.com/signintech/gopdf"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -84,6 +85,8 @@ func mm2pt(n float64) float64 {
 }
 
 func moji(s string) []string {
+	s = m.Convert(s, m.ZE, m.HE)
+	s = m.Convert(s, m.ZS, m.HS)
 	list := strings.Split(s, "")
 	for i := 0; i < len(list); i++ {
 		switch {
@@ -170,11 +173,12 @@ func make_fromName(name, address0, address1, code, path string) {
 
 	pdf.SetFont("test", "", name_size)
 	y := mm2pt(35)
-	name_list := strings.Split(name, "")
-	for i := 0; i < len(name_list); i++ {
+	name = m.Convert(name, m.ZS, m.HS)
+	name_list := strings.Split(name, " ")
+	for i := 0; i < len(strings.Split(name_list[0], "")); i++ {
 		pdf.SetX(141.75 - float64(name_size/2))
 		pdf.SetY(y)
-		pdf.Cell(nil, name_list[i])
+		pdf.Cell(nil, strings.Split(name_list[0], "")[i])
 		y += 36
 	}
 
@@ -184,9 +188,29 @@ func make_fromName(name, address0, address1, code, path string) {
 
 	y += 36
 
-	pdf.SetX(141.75 - float64(name_size/2))
-	pdf.SetY(y)
-	pdf.Cell(nil, "様")
+	orig_y := y
+
+	for i := 1; i < len(name_list); i++ {
+
+		y = orig_y
+
+		for j := 0; j < len(strings.Split(name_list[i], "")); j++ {
+			pdf.SetX(141.75 - float64(name_size/2) - float64((i-1)*(name_size+2)))
+			pdf.SetY(y)
+			pdf.Cell(nil, strings.Split(name_list[i], "")[j])
+			y += 36
+		}
+
+		pdf.SetX(141.75 - float64(name_size/2) - float64((i-1)*(name_size+2)))
+		pdf.SetY(y)
+		pdf.Cell(nil, " ")
+		y += 36
+
+		pdf.SetX(141.75 - float64(name_size/2) - float64((i-1)*(name_size+2)))
+		pdf.SetY(y)
+		pdf.Cell(nil, "様")
+
+	}
 
 	//住所印刷
 
@@ -234,7 +258,7 @@ func make_fromcsv(csv_path, path string) {
 			break
 		}
 		if n != 0 {
-			make_fromName(line[2], line[0], line[1], "", string(path)+strconv.Itoa(n)+".pdf")
+			make_fromName(line[2], line[0], line[1], line[3], string(path)+strconv.Itoa(n)+".pdf")
 			bar.Increment()
 		}
 		n++
