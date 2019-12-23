@@ -35,12 +35,8 @@ var name, address0, address1, csv_path, path, code, font string
 var makeCmd = &cobra.Command{
 	Use:   "make",
 	Short: "はがきの宛名を作成",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `オプションで与えられた住所情報または
+	csvファイルからはがきの宛名を作成します`,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch {
 		case name == "" && address0 == "" && csv_path == "":
@@ -72,8 +68,8 @@ func init() {
 	// is called directly, e.g.:
 	// makeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	makeCmd.PersistentFlags().StringVar(&name, "name", "", "宛先の名前")
-	makeCmd.PersistentFlags().StringVar(&address0, "address0", "", "宛先の住所の前半")
-	makeCmd.PersistentFlags().StringVar(&address1, "address1", "", "宛先の住所の後半")
+	makeCmd.PersistentFlags().StringVar(&address0, "address1", "", "宛先の住所の前半")
+	makeCmd.PersistentFlags().StringVar(&address1, "address2", "", "宛先の住所の後半")
 	makeCmd.PersistentFlags().StringVar(&code, "code", "", "宛先の郵便番号")
 	makeCmd.PersistentFlags().StringVar(&csv_path, "csv", "", "宛先のリストのcsvファイルのパス")
 	makeCmd.PersistentFlags().StringVar(&font, "font", "", "宛先のフォントのpath")
@@ -227,7 +223,7 @@ func make_fromName(name, address0, address1, code, path string) {
 		if len(strings.Split(address1, "")) > len(strings.Split(address0, "")) {
 			y = mm2pt(40)
 		} else {
-			y = mm2pt(30) + float64(address_size+2)*float64(17-len(strings.Split(address1, "")))
+			y = mm2pt(30) + float64(address_size+2)*float64(16-len(strings.Split(address1, "")))
 		}
 		address1_list := moji(address1)
 		for i := 0; i < len(address1_list); i++ {

@@ -26,14 +26,9 @@ var make_csvpath string
 
 // makeCsvCmd represents the makeCsv command
 var makeCsvCmd = &cobra.Command{
-	Use:   "make-csv [string to file name]",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "make-csv [path to csv]",
+	Short: "atena make のためのcsvファイルのテンプレートを作成",
+	Long:  "atena make のためのcsvファイルのテンプレートを作成",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(make_csvpath) < 5 || make_csvpath[len(make_csvpath)-4:] != ".csv" {
@@ -47,7 +42,7 @@ to quickly create a Cobra application.`,
 			defer file.Close()
 
 			writer := csv.NewWriter(file)
-			writer.Write([]string{"住所1", "住所2", "名前"})
+			writer.Write([]string{"住所1", "住所2", "名前", "郵便番号"})
 			writer.Flush()
 		}
 	},
