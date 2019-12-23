@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
 	"github.com/cheggaaa/pb/v3"
 	m "github.com/ktnyt/go-moji"
 	"github.com/signintech/gopdf"
@@ -121,7 +120,7 @@ func moji(s string) []string {
 		case list[i] == "9":
 			list[i] = "九"
 
-		case list[i] == "-" || list[i] == "ー" || list[i] == "ー":
+		case list[i] == "-" || list[i] == "−" || list[i] == "ー":
 			list[i] = "丨"
 
 		}
@@ -144,7 +143,7 @@ func make_fromName(name, address0, address1, code, path string) {
 	//	}
 
 	// 郵便番号api
-	if len(code) != 7 {
+	if len(strings.Split(code, "")) != 7 {
 		request, _ := http.NewRequest("GET", "https://zipcoda.net/api/", nil)
 		values := url.Values{}
 		values.Add("address", address0+address1)
@@ -227,13 +226,10 @@ func make_fromName(name, address0, address1, code, path string) {
 			y += float64(address_size + 2)
 		}
 
-		fmt.Println(len(address0))
-		fmt.Println(len(address1))
-
 		if len(strings.Split(address1, "")) > len(strings.Split(address0, "")) {
 			y = mm2pt(40)
 		} else {
-			y = mm2pt(30) + float64(address_size+2)*float64(len(strings.Split(address0, ""))-len(strings.Split(address1, "")))
+			y = mm2pt(30) + float64(address_size+2)*float64(17-len(strings.Split(address1, "")))
 		}
 		address1_list := moji(address1)
 		for i := 0; i < len(address1_list); i++ {
