@@ -182,13 +182,16 @@ func make_fromName(name, address0, address1, code, path string) {
 		y += 36
 	}
 
-	pdf.SetX(141.75 - float64(name_size/2))
-	pdf.SetY(y)
-	pdf.Cell(nil, " ")
-
-	y += 36
+	y += 18
 
 	orig_y := y
+
+	max_l := 0
+	for i := 1; i < len(name_list); i++ {
+		if max_l < len(strings.Split(name_list[i], "")) {
+			max_l = len(strings.Split(name_list[i], ""))
+		}
+	}
 
 	for i := 1; i < len(name_list); i++ {
 
@@ -202,12 +205,7 @@ func make_fromName(name, address0, address1, code, path string) {
 		}
 
 		pdf.SetX(141.75 - float64(name_size/2) - float64((i-1)*(name_size+2)))
-		pdf.SetY(y)
-		pdf.Cell(nil, " ")
-		y += 36
-
-		pdf.SetX(141.75 - float64(name_size/2) - float64((i-1)*(name_size+2)))
-		pdf.SetY(y)
+		pdf.SetY(orig_y + float64(max_l*36) + 18)
 		pdf.Cell(nil, "様")
 
 	}
