@@ -130,7 +130,7 @@ func make_fromName(name, address0, address1, code, path string) {
 	address_size := 14
 
 	pdf := gopdf.GoPdf{}
-	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: 283.5, H: 419.5}})
+	pdf.Start(gopdf.Config{PageSize: gopdf.Rect{W: mm2pt(100), H: mm2pt(148)}})
 	pdf.AddPage()
 
 	_ = pdf.AddTTFFont("test", font)
@@ -157,7 +157,7 @@ func make_fromName(name, address0, address1, code, path string) {
 	//郵便番号印刷
 
 	pdf.SetFont("test", "", 12)
-	pdf.SetY(34.0157)
+	pdf.SetY(mm2pt(13))
 	x := []float64{44.6, 52.3, 60.0, 68.3, 75.8, 83.3, 90.8}
 
 	for i := 0; i < 7; i++ {
@@ -220,11 +220,8 @@ func make_fromName(name, address0, address1, code, path string) {
 			y += float64(address_size + 2)
 		}
 
-		if len(strings.Split(address1, "")) > len(strings.Split(address0, "")) {
-			y = mm2pt(40)
-		} else {
-			y = mm2pt(30) + float64(address_size+2)*float64(16-len(strings.Split(address1, "")))
-		}
+		y = mm2pt(30) + float64(address_size+2)*float64(16-len(strings.Split(address1, "")))
+
 		address1_list := moji(address1)
 		for i := 0; i < len(address1_list); i++ {
 			pdf.SetX(mm2pt(90) - float64(address_size+4))
